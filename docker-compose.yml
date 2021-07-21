@@ -1,0 +1,38 @@
+
+version: "3.7"
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - recipesummary-db:/var/lib/postgresql/data
+
+  recipesummary:
+    build:
+      context: ./recipesummary
+    environment:
+      DB_SCHEMA: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: postgres
+      PORT: 8080
+    depends_on:
+      - postgres
+    ports:
+      - '8080:8080'
+
+  recipesummary-frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      - recipesummary
+    ports:
+      - '3000:3000'
+      - '80:80'
+
+volumes:
+  recipesummary-db:

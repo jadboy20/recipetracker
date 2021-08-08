@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "jest": "^27.0.6",
-    "pg": "^8.6.0"
+    "pg": "^8.6.0",
+    "sequelize-mock": "^0.10.2"
   }
 }

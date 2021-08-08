@@ -1,12 +1,13 @@
-const db = require('./database');
+const Ingredient = require('./ingredient');
+const db = require('../database')
 
 beforeAll(async () => {
-    await db.sequelize.sync({ force: true });
+    await Ingredient.sync({ force: true });
 });
 
 test('create ingredient', async () => {
     expect.assertions(1);
-    const ingredient = await db.Ingredient.create({
+    const ingredient = await Ingredient.create({
         id: 1,
         name: 'Orange',
     });
@@ -15,18 +16,18 @@ test('create ingredient', async () => {
 
 test('get ingredient', async () => {
     expect.assertions(1);
-    const ingredient = await db.Ingredient.findByPk(1);
+    const ingredient = await Ingredient.findByPk(1);
     expect(ingredient.name).toEqual('Orange');
 });
 
 test('delete ingredient', async () => {
     expect.assertions(1);
-    await db.Ingredient.destroy({
+    await Ingredient.destroy({
         where: {
             id: 1
         }
     });
-    const ingredient = await db.Ingredient.findByPk(1);
+    const ingredient = await Ingredient.findByPk(1);
     expect(ingredient).toBeNull();
 });
 

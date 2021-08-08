@@ -2,10 +2,10 @@
 
 var express = require('express');
 var router = express.Router();
-var db = require('../database.js');
+var Ingredient = require('../models/ingredient');
 
 router.get("/all", function(req, res) {
-    db.Ingredient.findAll()
+    Ingredient.findAll()
     .then(ingredients => {
         res.status(200).send(JSON.stringify(ingredients));
     })
@@ -15,7 +15,7 @@ router.get("/all", function(req, res) {
 });
 
 router.get("/:id", function(req, res) {
-    db.Ingredient.findByPk(req.params.id)
+    Ingredient.findByPk(req.params.id)
         .then( ingredient => {
             res.status(200).send(JSON.stringify(ingredient));
         })
@@ -25,7 +25,7 @@ router.get("/:id", function(req, res) {
 });
 
 router.put("/", function(req, res) {
-    db.Ingredient.create({
+    Ingredient.create({
         name: req.body.name,
         id: req.body.id
         })
@@ -38,7 +38,7 @@ router.put("/", function(req, res) {
 });
 
 router.delete("/:id", function(req, res) {
-    db.Ingredient.destroy({
+    Ingredient.destroy({
         where: {
             id: req.params.id
         }

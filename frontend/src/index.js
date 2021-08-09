@@ -1,14 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
-import 'semantic-ui-css/semantic.min.css'
+import 'semantic-ui-css/semantic.min.css';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import App from './components/App'
+import MainPage from './components/MainPage'
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <BrowserRouter>
+        <Switch>
+        <Route path="/main" component={ MainPage }/>
+          <Route path="/" component={ App }/>
+        </Switch>
+
+    </BrowserRouter>
+,
   document.getElementById('root')
 );
 

@@ -1,6 +1,6 @@
 var db = require('../database.js');
 const Ingredient = require('../models/ingredient');
-const { Recipe } = require('../models/recipe');
+const Recipe  = require('../models/recipe');
 const Recipe_Ingredient = require('../models/recipeIngredient');
 const { Op } = require("sequelize");
 
@@ -10,16 +10,22 @@ const syncDatabase = async () => {
     await Recipe.sync();
     await Recipe_Ingredient.sync();*/
 
-    const recipe = await Recipe.findOne({
-        where: { id: 4},
-        include: Ingredient
-    });
+    try {
+        const recipe = await Recipe.findOne({
+            where: { id: 1},
+            include: Ingredient
+        });
+        console.log(recipe && recipe.Ingredients);
+    } catch (err) {
+        console.log("Caught error");
+        console.log(err);
+    }
+
 
     // const recipe = await Recipe.findOne({
     //     where: { name: {[Op.like]: '%cake%'}},
     //     include: Ingredient
     // });
-    console.log(recipe.Ingredients);
 }
 
 syncDatabase();

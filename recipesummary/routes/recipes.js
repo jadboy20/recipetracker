@@ -2,7 +2,7 @@
 
 var express = require('express');
 var router = express.Router();
-var { Recipe } = require('../models/recipe');
+var Recipe = require('../models/recipe');
 
 router.get("/all", function(req, res) {
     Recipe.findAll()
@@ -26,6 +26,7 @@ router.get("/:id", function(req, res) {
 
 router.post("/", function(req, res) {
     Recipe.create({
+            serves: req.body.serves,
             name: req.body.name,
             author: req.body.author,
             id: req.body.id

@@ -6,11 +6,13 @@ import 'semantic-ui-css/semantic.min.css';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import App from './components/App'
 import MainPage from './components/MainPage'
+import Recipe from './components/Recipe'
 
 ReactDOM.render(
     <BrowserRouter>
         <Switch>
         <Route path="/main" component={ MainPage }/>
+          <Route path="/recipe" component={ Recipe }/>
           <Route path="/" component={ App }/>
         </Switch>
 

@@ -6,7 +6,18 @@ import { Link } from 'react-router-dom';
 
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
 
+    componentDidMount() {
+        console.log("App mounted...");
+    }
+
+    componentWillUnmount() {
+        console.log("App unmounted...");
+    }
     render() {
         return (
             <div>

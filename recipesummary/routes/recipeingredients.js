@@ -5,6 +5,7 @@ var router = express.Router();
 var Recipe_Ingredient = require('../models/recipeIngredient');
 var Ingredient = require('../models/ingredient');
 var Recipe = require('../models/recipe');
+const { Op } = require('sequelize');
 
 // Show all ingredients in a recipe
 router.get("/recipe/:id", function (req, res) {
@@ -22,6 +23,25 @@ router.get("/ingredient/:id", async function (req, res) {
     try {
         const ingredientId = req.params.id;
         const ingredientIncludingRecipes = await Ingredient.findOne({where: { id: ingredientId }, include: Recipe });
+
+        res.status(200).send(JSON.stringify(ingredientIncludingRecipes));
+    } catch (err) {
+        res.status(500).send(JSON.stringify(err));
+    }
+});
+
+router.get("/ingredient/name/:nameSearch", async function (req, res) {
+    try {
+        const ingredientNameSearch = req.params.nameSearch;
+        console.log(ingredientNameSearch);
+        const ingredientIncludingRecipes = await Ingredient.findAll({
+            where: {
+                name: {
+                    [Op.iLike]: `%${ingredientNameSearch}%`
+                }
+            },
+            include: Recipe
+        });
 
         res.status(200).send(JSON.stringify(ingredientIncludingRecipes));
     } catch (err) {

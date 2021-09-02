@@ -2,14 +2,14 @@ import { Header, Input, List } from 'semantic-ui-react'
 import { render } from 'react-dom';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { BACKEND_HOST } from '../common'
+import { BACKEND_HOST } from '../common';
 
 
 class MainPage extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {recipes: [], errors: null, ingredientsWithRecipes: []};
+        this.state = { recipes: [], errors: null, ingredientsWithRecipes: [] };
     }
 
     componentDidMount() {
@@ -18,12 +18,12 @@ class MainPage extends Component {
         // When we enter this page, lets get the latest information.
         (async () => {
             // get the latest recipes.
-            const response = await fetch(`${BACKEND_HOST}/recipes/all`, {method: "GET"});
+            const response = await fetch(`${BACKEND_HOST}/recipes/all`, { method: "GET" });
             const recipes = await response.json();
 
             if (recipes) {
                 console.log(recipes);
-                this.setState({recipes: recipes, error: null});
+                this.setState({ recipes: recipes, error: null });
             }
         })();
 
@@ -45,14 +45,14 @@ class MainPage extends Component {
                     (async () => {
                         const searchTerm = data.value;
                         if (searchTerm.trim().length === 0) {
-                            this.setState({...this.state, ingredientsWithRecipes: []});
+                            this.setState({ ...this.state, ingredientsWithRecipes: [] });
                             return;
                         }
                         const response = await fetch(
                             `${BACKEND_HOST}/recipeingredients/ingredient/name/${searchTerm}`,
-                            {method: "GET"});
+                            { method: "GET" });
                         const ingredientsWithRecipes = await response.json();
-                        this.setState({...this.state, ingredientsWithRecipes});
+                        this.setState({ ...this.state, ingredientsWithRecipes });
                         console.log(ingredientsWithRecipes);
 
                     })();
@@ -74,7 +74,7 @@ class MainPage extends Component {
                                                                 pathname: "/recipe",
                                                                 id: recipe.id
                                                             }}>
-                                                            {recipe.name}
+                                                                {recipe.name}
                                                             </Link>
                                                         </List.Item>
                                                     )
@@ -88,8 +88,10 @@ class MainPage extends Component {
 
                 </div>
 
-                <Link to="/">Back home...</Link>
-                <div></div>
+                <List>
+                    <List.Item><Link to="/">Back home...</Link></List.Item>
+                    <List.Item><Link to="/recipeform">Recipe Form</Link></List.Item>
+                </List>
             </div>
         );
     }

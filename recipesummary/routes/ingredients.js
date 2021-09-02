@@ -3,11 +3,29 @@
 var express = require('express');
 var router = express.Router();
 var Ingredient = require('../models/ingredient');
+const { Op } = require('sequelize');
 
 router.get("/all", function(req, res) {
     Ingredient.findAll()
     .then(ingredients => {
         res.status(200).send(JSON.stringify(ingredients));
+    })
+    .catch( err => {
+        res.status(500).send(JSON.stringify(err));
+    });
+});
+
+router.get("/name/:name", function (req, res) {
+    const nameToSearch = req.params.name;
+    Ingredient.findAll({
+        where: {
+            name: {
+                [Op.iLike]: `%${nameToSearch}%`
+            }
+        }
+    })
+    .then( ingredient => {
+        res.status(200).send(JSON.stringify(ingredient));
     })
     .catch( err => {
         res.status(500).send(JSON.stringify(err));

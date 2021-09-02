@@ -1,7 +1,8 @@
-import { Header, Button, List, Popup } from 'semantic-ui-react'
+import { Header, List, Popup, Dropdown } from 'semantic-ui-react'
 import { render } from 'react-dom';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { BACKEND_HOST } from '../common'
 
 /**
  * We can pass props: id, and
@@ -16,8 +17,12 @@ class Recipe extends Component {
                 id: 'Getting id',
                 serves: 'Getting serving size'
             },
-            ingredients: []
-         };
+            ingredients: [],
+            ingredientSearchTerm: '',
+            foundIngredients: [
+                {name: 'hello'}
+            ]
+        };
     }
 
     componentDidMount() {
@@ -26,14 +31,16 @@ class Recipe extends Component {
         console.log(id);
         // Lets get the ingredients for this.
         (async () => {
-            const response = await fetch('http://192.168.0.83/backend/recipeingredients/recipe/' + id, {method: "GET"});
+            const response = await fetch(`${BACKEND_HOST}/recipeingredients/recipe/${id}`, { method: "GET" });
             const recipeIngredients = await response.json();
 
-            this.setState({recipe: {
-                id: recipeIngredients.id,
-                name: recipeIngredients.name,
-                serves: recipeIngredients.serves
-            }, ingredients: recipeIngredients.Ingredients});
+            this.setState({
+                recipe: {
+                    id: recipeIngredients.id,
+                    name: recipeIngredients.name,
+                    serves: recipeIngredients.serves
+                }, ingredients: recipeIngredients.Ingredients
+            });
 
         })();
 
@@ -69,27 +76,80 @@ class Recipe extends Component {
                         </tr>
                     </tbody>
                 </table>
-                <br/>
-                <br/>
+                <br />
+                <br />
 
                 <Header as='h2'>Ingredients</Header>
                 <div>
-                <List bulleted>
-                    {ingredients.map((ingredient) =>
-                    <Popup position='top left' trigger={
-                        <List.Item key={`ingredient-${ingredient.id}`}>
-                            <List.Icon/>
-                            <List.Content>
-                                {ingredient.name} x {ingredient.Recipe_Ingredient.quantity}
-                            </List.Content>
-                        </List.Item>
-                    }>
-                        <Popup.Content>Click here to see recipes using {ingredient.name}</Popup.Content>
-                    </Popup>
-                    )}
-                </List>
+                    <List bulleted>
+                        {ingredients.map((ingredient) =>
+                            <Popup position='top left' trigger={
+                                <List.Item key={`ingredient-${ingredient.id}`}>
+                                    <List.Content>
+                                        {ingredient.name} x {ingredient.Recipe_Ingredient.quantity}
+                                    </List.Content>
+                                </List.Item>
+                            }>
+                                <Popup.Content>Click here to see recipes using {ingredient.name}</Popup.Content>
+                            </Popup>
+                        )}
+                    </List>
+
+                    <Dropdown
+                        options={this.state.foundIngredients}
+                        search
+                        selection
+                        placeholder='Add ingredient...'
+                        allowAdditions
+                        inline
+                        onAddItem={(e, {value}) => {
+                            console.log(`I added ${value}`);
+                        }}
+                        onChange={(e, { value }) => {
+                            console.log(e.target.textContent);
+                        }}
+                        onSearchChange={(e, { value }) => {
+                            const searchTerm = e.target.value;
+                            console.log(searchTerm);
+                            (async () => {
+                                if (!searchTerm) {
+                                    // There is no search, then we clear the options.
+                                    this.setState({
+                                        ...this.state,
+                                        foundIngredients: []
+                                    })
+                                    return;
+                                }
+                                const response = await fetch(`${BACKEND_HOST}/ingredients/name/${searchTerm}`, {
+                                    method: 'GET'
+                                });
+
+                                const ingredients = await response.json();
+
+                                const ingredientsMapped = await ingredients.map((ingredient) => (
+                                    {
+                                        key: ingredient.id,
+                                        text: ingredient.name
+                                    }
+                                ));
+                                console.log(ingredientsMapped);
+                                this.setState({
+                                    ...this.state,
+                                    foundIngredients: ingredientsMapped
+                                });
+                            })();
+
+                        }}
+                    />
                 </div>
-                <br/>
+                <br />
+                <br />
+                {/*
+                    Here we want to give the user some input to add a recipe.
+                    While they are entering it, it will give them suggestions to
+                    ingredients that already exist.
+                */}
+
                 <br/>
                 <Link to='/main'>Back to main page...</Link>
             </div>

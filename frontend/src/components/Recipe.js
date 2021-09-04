@@ -105,8 +105,29 @@ class Recipe extends Component {
                         onAddItem={(e, {value}) => {
                             console.log(`I added ${value}`);
                         }}
-                        onChange={(e, { value }) => {
-                            console.log(e.target.textContent);
+                        onChange={(e, {value, name}) => {
+                            const selectedIngredientId = value;
+                            const thisRecipeId = this.state.recipe.id;
+                            // If this was selected, then we know that
+                            // the ingredient already exists.
+                            (async (selectedIngredientId) => {
+                                console.log(`Adding ingredient id: ${selectedIngredientId}`);
+
+                                // Here we make communication with the server.
+                                var formData = new URLSearchParams();
+                                    formData.append('ingredientId', selectedIngredientId);
+
+                                const response = await fetch(`${BACKEND_HOST}/recipeingredients/recipe/${thisRecipeId}`, {
+                                    method: "POST",
+                                    body: formData
+                                });
+
+                                const result = await response.json();
+
+                                console.log(result);
+
+                            })(selectedIngredientId);
+
                         }}
                         onSearchChange={(e, { value }) => {
                             const searchTerm = e.target.value;
@@ -126,19 +147,32 @@ class Recipe extends Component {
 
                                 const ingredients = await response.json();
 
-                                const ingredientsMapped = await ingredients.map((ingredient) => (
-                                    {
-                                        key: ingredient.id,
-                                        text: ingredient.name
+                                // Map to object.
+                                let objectIngredients = {};
+                                this.state.ingredients.forEach((ingredient) => {
+                                    objectIngredients[ingredient.id] = {
+                                        name: ingredient.name,
+                                        createdAt: ingredient.createdAt
+                                    };
+                                });
+
+                                const filteredIngredients = ingredients.filter((ingredient) => {
+                                    if (objectIngredients[ingredient.id]) {
+                                        return false;
                                     }
-                                ));
-                                console.log(ingredientsMapped);
+                                    return true;
+                                })
+                                .map((ingredient) => ({
+                                    key: ingredient.id,
+                                    text: ingredient.name,
+                                    value: ingredient.id
+                                }));
+
                                 this.setState({
                                     ...this.state,
-                                    foundIngredients: ingredientsMapped
+                                    foundIngredients: filteredIngredients
                                 });
                             })();
-
                         }}
                     />
                 </div>
